@@ -1,0 +1,142 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+//use Illuminate\Container\Attributes\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
+class AccountController extends Controller
+{
+    //Página de registro de conta
+    public function register() {
+        return view('account.register');
+    }
+
+    //Processa o registro de conta
+    public function processRegister(Request $request) {
+        $validadtor = Validator::make($request->all(), [
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8',
+        ]);
+
+        if ($validadtor->fails()) {
+            return redirect()->route('account.register')
+                ->withInput()
+                ->withErrors($validadtor);
+        }
+
+        // Criação do usuário
+        $user = new User();
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = Hash::make($request->input('password'));
+        //$user->role = 'user'; // Definindo o papel padrão como 'user'
+        $user->save();
+
+        return redirect()->route('account.login')
+            ->with('success', 'Conta criada com sucesso! Faça login para continuar.');
+
+    }
+
+    public function login() {
+        return view('account.login');
+
+    }
+
+    public function processLogin(Request $request) {
+        $validadtor = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validadtor->fails()) {
+            return redirect()->route('account.login')
+                ->withInput()
+                ->withErrors($validadtor);
+        }
+
+        if (FacadesAuth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
+            return redirect()->route('account.profile')
+                ->with('success', 'Login realizado com sucesso!');
+        } else {
+            return redirect()->route('account.login')
+                ->with('error', 'Credenciais inválidas.');
+        }
+    }
+
+    public function profile() {
+
+        $user = User::find(Auth::user()->id);
+
+        return view('account.profile', [
+            'user' => $user
+        ]);
+
+    }
+
+    public function updateProfile(Request $request) {
+
+        $rules = [
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::user()->id,
+        ];
+
+        if (!empty($request->image)){
+            $rules['image'] = 'image|mimes:jpeg,png,jpg|max:2048';
+        }
+
+        $validadtor = Validator::make($request->all(), $rules);
+
+        if ($validadtor->fails()) {
+            return redirect()->route('account.profile')
+                ->withInput()
+                ->withErrors($validadtor);
+        }
+
+        $user = User::find(Auth::id());
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->save();
+
+        if (!empty($request->image)) {
+
+            // Verifica se já existe uma imagem e a remove
+            File::delete(public_path('uploads/profileImg/' . $user->image));
+            File::delete(public_path('uploads/profileImg/thumb/' . $user->image));
+
+            $image = $request->image;
+            $ext = $image->getClientOriginalExtension();
+            $imageName = time() . '.' . $ext;
+            $image->move(public_path('uploads/profileImg'), $imageName);
+
+            $user->image = $imageName;
+            $user->save();
+
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read(public_path('uploads/profileImg/' . $imageName));
+            $thumb = $img->cover(150, 150);
+            $thumbPath = public_path('uploads/profileImg/thumb/' . $imageName);
+            $thumb->save($thumbPath);
+    }
+        
+        return redirect()->route('account.profile')
+            ->with('success', 'Perfil atualizado com sucesso!');
+    }
+
+    public function logout() {
+        Auth::logout();
+        return redirect()->route('account.login')
+            ->with('success', 'Logout realizado com sucesso!');
+    }
+
+}
