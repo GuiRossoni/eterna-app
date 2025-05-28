@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-//use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -15,12 +14,11 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class AccountController extends Controller
 {
-    //Página de registro de conta
+
     public function register() {
         return view('account.register');
     }
 
-    //Processa o registro de conta
     public function processRegister(Request $request) {
         $validadtor = Validator::make($request->all(), [
             'name' => 'required|string|min:3|max:255',
@@ -40,7 +38,6 @@ class AccountController extends Controller
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
-        //$user->role = 'user'; // Definindo o papel padrão como 'user'
         $user->save();
 
         return redirect()->route('account.login')
@@ -110,7 +107,6 @@ class AccountController extends Controller
 
         if (!empty($request->image)) {
 
-            // Verifica se já existe uma imagem e a remove
             File::delete(public_path('uploads/profileImg/' . $user->image));
             File::delete(public_path('uploads/profileImg/thumb/' . $user->image));
 

@@ -59,7 +59,6 @@
                                 @error('image')
                                     <p class="invalid-feedback">{{ $message }}</p>
                                 @enderror
-                                <!--<img src="images/profile-img-1.jpg" class="img-fluid mt-4" alt="Imagem" > -->
                             </div>   
                             <button class="btn btn-primary mt-2">Atualizar</button>
                         </form>                  

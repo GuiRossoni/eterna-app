@@ -33,7 +33,7 @@
                                         @if ($book->image != '')
                                             <img src="{{ asset('uploads/books/thumb/' . $book->image) }}" alt="" class="card-img-top">
                                         @else
-                                            <img src="{{ asset('uploads/profileimg/default.png') }}" alt="" class="card-img-top">
+                                            <img src="{{ asset('uploads/profileImg/default.png') }}" alt="" class="card-img-top">
                                         @endif
                                     <div class="card-body">
                                         <h3 class="h4 heading"><a href="#">{{ $book->title }}</a></h3>

@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-//use DragonCode\Contracts\Cashier\Http\Request;
 use App\Models\Book;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
@@ -35,8 +34,8 @@ class BookController extends Controller
     {
         $rules = 
         [
-            'title' => 'required|string|min:5|max:255',
-            'author' => 'required|string|min:5|max:255',
+            'title' => 'required|string|min:5|max:150',
+            'author' => 'required|string|min:5|max:100',
             'description' => 'nullable|string|max:1000',
             'status' => 'required|in:1,0',
         ];
@@ -95,8 +94,8 @@ class BookController extends Controller
 
         $rules = 
         [
-            'title' => 'required|string|min:5|max:255',
-            'author' => 'required|string|min:5|max:255',
+            'title' => 'required|string|min:5|max:150',
+            'author' => 'required|string|min:5|max:100',
             'description' => 'nullable|string|max:1000',
             'status' => 'required|in:1,0',
         ];
