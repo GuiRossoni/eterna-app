@@ -3,8 +3,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Review;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -21,6 +24,27 @@ class HomeController extends Controller
 
         return view('home', [
             'books' => $books,
+        ]);
+    }
+
+    public function detail($id, Request $request)
+    {
+        $book = Book::findOrFail($id);
+
+        if ($book->status == 0) {
+            abort(404);
+        }
+
+        // Se veio via GET, coloca na session para exibir o flash
+        if ($request->has('success_review')) {
+            session()->flash('success_review', $request->get('success_review'));
+        }
+        if ($request->has('error_review')) {
+            session()->flash('error_review', $request->get('error_review'));
+        }
+
+        return view('book-detail', [
+            'book' => $book
         ]);
     }
 }

@@ -32,10 +32,15 @@ class BookController extends Controller
     }
     public function store(Request $request)
     {
-        $rules = 
-        [
+        $rules = [
             'title' => 'required|string|min:5|max:150',
-            'author' => 'required|string|min:5|max:100',
+            'author' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
+            ],
             'description' => 'nullable|string|max:1000',
             'status' => 'required|in:1,0',
         ];
@@ -44,7 +49,11 @@ class BookController extends Controller
             $rules['image'] = 'image|mimes:jpeg,png,jpg|max:2048';
         }
 
-        $validator = Validator::make($request->all(), $rules);
+        $messages = [
+            'author.regex' => 'O nome do autor deve conter apenas letras.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return redirect()->route('books.create')
@@ -92,10 +101,15 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($id);
 
-        $rules = 
-        [
+        $rules = [
             'title' => 'required|string|min:5|max:150',
-            'author' => 'required|string|min:5|max:100',
+            'author' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
+            ],
             'description' => 'nullable|string|max:1000',
             'status' => 'required|in:1,0',
         ];
@@ -104,7 +118,11 @@ class BookController extends Controller
             $rules['image'] = 'image|mimes:jpeg,png,jpg|max:2048';
         }
 
-        $validator = Validator::make($request->all(), $rules);
+        $messages = [
+            'author.regex' => 'O nome do autor deve conter apenas letras.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return redirect()->route('books.edit', $book->id)

@@ -29,11 +29,11 @@
                         @foreach ($books as $book)
                             <div class="col-md-4 col-lg-3 mb-4">
                                 <div class="card border-0 shadow-lg">
-                                    <a href="detail.html">
+                                    <a href="{{ route("book.detail", $book->id) }}">
                                         @if ($book->image != '')
                                             <img src="{{ asset('uploads/books/thumb/' . $book->image) }}" alt="" class="card-img-top">
                                         @else
-                                            <img src="{{ asset('uploads/profileImg/default.png') }}" alt="" class="card-img-top">
+                                            <img src="https://placehold.co/900x1366?text=Sem Imagem" alt="" class="card-img-top">
                                         @endif
                                     <div class="card-body">
                                         <h3 class="h4 heading"><a href="#">{{ $book->title }}</a></h3>

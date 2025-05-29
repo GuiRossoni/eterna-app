@@ -20,12 +20,21 @@ class AccountController extends Controller
     }
 
     public function processRegister(Request $request) {
+        $messages = [
+            'name.regex' => 'O nome deve conter apenas letras.',
+        ];
         $validadtor = Validator::make($request->all(), [
-            'name' => 'required|string|min:3|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
+            ],
+            'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8',
-        ]);
+        ], $messages);
 
         if ($validadtor->fails()) {
             return redirect()->route('account.register')
@@ -52,7 +61,7 @@ class AccountController extends Controller
 
     public function processLogin(Request $request) {
         $validadtor = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:100',
             'password' => 'required|string|min:8',
         ]);
 
@@ -84,12 +93,18 @@ class AccountController extends Controller
     public function updateProfile(Request $request) {
 
         $rules = [
-            'name' => 'required|string|min:3|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::user()->id,
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
+            ],
+            'email' => 'required|string|email|max:100|unique:users,email,' . Auth::user()->id,
         ];
 
         if (!empty($request->image)){
-            $rules['image'] = 'image|mimes:jpeg,png,jpg|max:2048';
+            $rules['image'] = 'image|mimes:jpeg,png,jpg,gif|max:2048';
         }
 
         $validadtor = Validator::make($request->all(), $rules);
