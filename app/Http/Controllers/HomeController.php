@@ -29,13 +29,15 @@ class HomeController extends Controller
 
     public function detail($id, Request $request)
     {
-        $book = Book::findOrFail($id);
+        $book = Book::with(['reviews.user', 'reviews' => function($query){
+            $query->where('status', 1)
+                  ->orderBy('created_at', 'DESC');
+        }])->findOrFail($id);
 
         if ($book->status == 0) {
             abort(404);
         }
 
-        // Se veio via GET, coloca na session para exibir o flash
         if ($request->has('success_review')) {
             session()->flash('success_review', $request->get('success_review'));
         }

@@ -63,6 +63,10 @@
                                 </div>
                             </div>
                         @endforeach
+                    @else
+                            <div>
+                                Nenhum livro encontrado.
+                            </div>
                     @endif
                     {{ $books->links() }}
                 </div>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->text('review');
             $table->tinyInteger('rating');
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
 
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');

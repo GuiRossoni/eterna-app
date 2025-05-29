@@ -9,6 +9,26 @@ use App\Models\Review;
 
 class ReviewController extends Controller
 {
+
+    public function index(Request $request){
+        if ($request->has('success')) {
+            session()->flash('success', $request->get('success'));
+        }
+
+        $reviews = Review::with('book', 'user')->orderBy('created_at', 'DESC');
+
+        if(!empty($request->keyword)) {
+            $reviews = $reviews->where('review', 'like', '%'.$request->keyword.'%');
+        }
+        
+        $reviews = $reviews->paginate(10);
+        
+        return view('account.reviews.list', [
+            'reviews' => $reviews,
+        ]);
+        
+    }
+
     public function store(Request $request)
     {
         if (!Auth::check()) {
@@ -49,6 +69,7 @@ class ReviewController extends Controller
         $review->user_id = Auth::id();
         $review->review = $request->review;
         $review->rating = $request->rating;
+        $review->status = 1;
         $review->save();
 
         return response()->json([
@@ -57,4 +78,62 @@ class ReviewController extends Controller
             'redirect' => route('book.detail', $request->book_id)
         ]);
     }
+
+    public function edit($id)
+    {
+        $review = Review::findOrFail($id);
+
+        return view('account.reviews.edit', [
+            'review' => $review,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $review = Review::findOrFail($id);
+
+        if ($review->user_id != Auth::id()) {
+            return redirect()->route('account.reviews')->withErrors(['Você não tem permissão para editar esta avaliação.']);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'review' => 'required|min:5|max:500',
+            'status' => 'required|in:0,1',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $review->review = $request->review;
+        $review->status = $request->status;
+        $review->save();
+
+        return redirect()->route('account.reviews')->with('success', 'Avaliação atualizada com sucesso!');
+    }
+
+    public function deleteReview(Request $request)
+    {
+        $id = $request->id;
+        $review = Review::find($id);
+        if ($review == null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Avaliação não encontrada.',
+            ]);
+        }
+        // Verifica se o usuário é o dono da review
+        if ($review->user_id != Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Você não tem permissão para excluir esta avaliação.',
+            ]);
+        }
+        $review->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Avaliação excluída com sucesso.',
+        ]);
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -148,6 +149,21 @@ class AccountController extends Controller
         Auth::logout();
         return redirect()->route('account.login')
             ->with('success', 'Logout realizado com sucesso!');
+    }
+
+    public function myReviews(){
+
+        $reviews = Review::where('user_id', Auth::id())
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
+        //if ($reviews->isEmpty()) {
+        //    return redirect()->route('account.profile')
+        //        ->with('error', 'Você ainda não avaliou nenhum livro.');
+        //}
+
+        return view('account.my-reviews', [
+            'reviews' => $reviews,
+        ]);
     }
 
 }
