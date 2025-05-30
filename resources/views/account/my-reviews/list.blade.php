@@ -14,11 +14,20 @@
                         Minhas Avaliações
                     </div>
                     <div class="card-body pb-0">
+                        <div class="d-flex justify-content-end">
+                        <form action="" method="GET">
+                            <div class="d-flex">
+                                <input type="text" class="form-control" value="{{ Request::get('keyword') }}" name="keyword" placeholder="Buscar Livro">
+                                <button type="submit" class="btn btn-primary ms-2">Buscar</button>
+                                <a href="{{ route('account.myReviews') }}" class="btn btn-secondary ms-2">Limpar</a>
+                            </div>
+                        </form>                            
+                    </div>
                         <table class="table table-striped mt-3">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Avaliação</th>
                                     <th>Livro</th>
+                                    <th>Avaliação</th>                                   
                                     <th>Pontuação</th>
                                     <th>Criado</th>
                                     <th>Estado</th>
@@ -29,8 +38,8 @@
                                 @if ($reviews->isNotEmpty())
                                     @foreach ($reviews as $review)
                                         <tr>
-                                            <td>{{ $review->review }}</td>
                                             <td>{{ $review->book->title }}</td>
+                                            <td>{{ $review->review }}</td>
                                             <td>{{ $review->rating }}</td>
                                             <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d M, Y') }}</td>
                                             <td>
@@ -41,7 +50,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('account.reviews.edit', $review->id) }}" class="btn btn-primary btn-sm"><i class="fa-regular fa-pen-to-square"></i></a>
+                                                <a href="{{ route('account.myReviews.edit', $review->id) }}" class="btn btn-primary btn-sm"><i class="fa-regular fa-pen-to-square"></i></a>
                                                 <a href="#" onclick="event.preventDefault(); deleteReview({{ $review->id }});" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
                                             </td>
                                         </tr>
@@ -75,7 +84,7 @@
                 },
                 success: function(response) {
                     if(response.success) {
-                        window.location.href = "{{ route('account.myReviews') }}?success=" + encodeURIComponent(response.message);
+                        window.location.href = "{{ route('account.myReviews') }}";
                     } else {
                         alert(response.message);
                     }

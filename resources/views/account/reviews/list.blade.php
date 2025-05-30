@@ -16,7 +16,7 @@
                     <div class="d-flex justify-content-end">
                         <form action="" method="GET">
                             <div class="d-flex">
-                                <input type="text" class="form-control" value="{{ Request::get('keyword') }}" name="keyword" placeholder="Buscar">
+                                <input type="text" class="form-control" value="{{ Request::get('keyword') }}" name="keyword" placeholder="Buscar Livro">
                                 <button type="submit" class="btn btn-primary ms-2">Buscar</button>
                                 <a href="{{ route('account.reviews') }}" class="btn btn-secondary ms-2">Limpar</a>
                             </div>

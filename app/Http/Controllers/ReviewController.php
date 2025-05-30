@@ -17,8 +17,10 @@ class ReviewController extends Controller
 
         $reviews = Review::with('book', 'user')->orderBy('created_at', 'DESC');
 
-        if(!empty($request->keyword)) {
-            $reviews = $reviews->where('review', 'like', '%'.$request->keyword.'%');
+        if (!empty($request->keyword)) {
+            $reviews = $reviews->whereHas('book', function($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->keyword . '%');
+            });
         }
         
         $reviews = $reviews->paginate(10);

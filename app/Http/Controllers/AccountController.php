@@ -151,19 +151,59 @@ class AccountController extends Controller
             ->with('success', 'Logout realizado com sucesso!');
     }
 
-    public function myReviews(){
+    public function myReviews(Request $request) {
+        if ($request->has('success')) {
+            session()->flash('success', $request->get('success'));
+        }
 
-        $reviews = Review::where('user_id', Auth::id())
-            ->orderBy('created_at', 'DESC')
-            ->paginate(10);
-        //if ($reviews->isEmpty()) {
-        //    return redirect()->route('account.profile')
-        //        ->with('error', 'Você ainda não avaliou nenhum livro.');
-        //}
+        $reviews = Review::with('book')->where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC');
 
-        return view('account.my-reviews', [
+        if (!empty($request->keyword)) {
+            $reviews = $reviews->whereHas('book', function($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->keyword . '%');
+            });
+        }
+
+        $reviews = $reviews->paginate(10);
+
+        return view('account.my-reviews.list', [
             'reviews' => $reviews,
         ]);
+    }
+
+    public function edit($id) {
+
+        $review = Review::where([
+            'id' => $id,
+            'user_id' => Auth::user()->id
+        ])->firstOrFail();
+
+        return view('account.my-reviews.edit', [
+            'review' => $review,
+        ]);
+    }
+
+    public function updateMyReview(Request $request, $id)
+    {
+        $review = Review::where([
+            'id' => $id,
+            'user_id' => Auth::user()->id
+        ])->firstOrFail();
+
+        $validator = Validator::make($request->all(), [
+            'review' => 'required|min:5|max:500',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $review->review = $request->review;
+        $review->rating = $request->rating;
+        $review->save();
+
+        return redirect()->route('account.myReviews')->with('success', 'Avaliação atualizada com sucesso!');
     }
 
 }
