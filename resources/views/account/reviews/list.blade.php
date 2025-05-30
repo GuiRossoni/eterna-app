@@ -37,9 +37,9 @@
                                 @if ($reviews->isNotEmpty())
                                     @foreach ($reviews as $review)
                                         <tr>
-                                            <td>{{ $review->review}} <br/><strong>{{ $review->user->name }}</strong></td>
-                                            <td>{{ $review->book->title}}</td>
-                                            <td>{{ $review->rating}}</td>
+                                            <td>{{ $review->review }} <br/><strong>{{ $review->user->name }}</strong></td>
+                                            <td>{{ $review->book?->title ?? 'Livro removido' }}</td>
+                                            <td>{{ $review->rating }}</td>
                                             <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d M, Y') }}</td>
                                             <td>
                                                 @if ($review->status == 1)

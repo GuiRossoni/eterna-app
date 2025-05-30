@@ -20,7 +20,7 @@ class BookController extends Controller
                 ->orWhere('author', 'like', '%' . $request->keyword . '%');
         }
 
-        $books = $books->paginate(10);
+        $books = $books->withCount('reviews')->withSum('reviews', 'rating')->paginate(10);
         
         return view('books.list',[
             'books' => $books,
@@ -82,7 +82,7 @@ class BookController extends Controller
 
             $manager = new ImageManager(new Driver());
             $img = $manager->read(public_path('uploads/books/' . $imageName));
-            $img->resize(990);
+            $img->resize(990, 1500);
             $img->save(public_path('uploads/books/thumb/' . $imageName));
         }
 
