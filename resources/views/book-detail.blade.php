@@ -129,7 +129,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Criar avaliação para: <strong>Atomic Habits</strong></h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Criar avaliação para: {{ $book->title }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="bookReviewForm" name="bookReviewForm">
@@ -174,7 +174,7 @@
             data: $("#bookReviewForm").serialize(),
             success: function(response) {
                 if (response.success) {
-                    window.location.href = response.redirect + '?success_review=' + encodeURIComponent(response.message);
+                    window.location.href = response.redirect; // sem mensagem na URL
                 } else if (response.redirect) {
                     window.location.href = response.redirect;
                 } else {

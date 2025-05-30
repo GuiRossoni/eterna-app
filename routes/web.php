@@ -28,13 +28,13 @@ Route::group(['prefix' => 'account'], function(){
             Route::get('books/edit/{id}', [BookController::class, 'edit'])->name('books.edit');
             Route::post('books/edit/{id}', [BookController::class, 'update'])->name('books.update.post');
             Route::delete('books/delete/{id}', [BookController::class, 'destroy'])->name('books.destroy');
-            Route::post('books/review', [ReviewController::class, 'store'])->name('books.review.post');
             Route::get('reviews', [ReviewController::class, 'index'])->name('account.reviews');
             Route::get('reviews/{id}', [ReviewController::class, 'edit'])->name('account.reviews.edit');
             Route::post('reviews/edit/{id}', [ReviewController::class, 'update'])->name('account.reviews.update');
             Route::delete('delete-review', [ReviewController::class, 'deleteReview'])->name('account.reviews.deleteReview');
         });
 
+        Route::post('books/review', [ReviewController::class, 'store'])->name('books.review.post');
         Route::get('my-reviews/list', [AccountController::class, 'myReviews'])->name('account.myReviews');
         Route::get('my-reviews/edit/{id}', [AccountController::class, 'edit'])->name('account.myReviews.edit');
         Route::post('my-reviews/edit/{id}', [AccountController::class, 'updateMyReview'])->name('account.myReviews.update');
