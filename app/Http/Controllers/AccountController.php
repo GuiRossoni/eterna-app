@@ -206,4 +206,39 @@ class AccountController extends Controller
         return redirect()->route('account.myReviews')->with('success', 'Avaliação atualizada com sucesso!');
     }
 
+    public function changePasswordForm()
+    {
+        return view('account.change-password');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ], [
+            'new_password.confirmed' => 'A confirmação da nova senha não confere.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('account.changePassword')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            return redirect()->route('account.changePassword')
+                ->withErrors(['old_password' => 'A senha atual está incorreta.'])
+                ->withInput();
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->route('account.profile')
+            ->with('success', 'Senha alterada com sucesso!');
+    }
+
 }

@@ -37,7 +37,7 @@
                         <a href="{{ route('account.myReviews') }}">Minhas Avaliações</a>
                     </li>
                     <li class="nav-item">
-                        <a href="change-password.html">Trocar Senha</a>
+                        <a href="{{ route('account.changePassword') }}">Trocar Senha</a>
                     </li> 
                     @auth
                     <li class="nav-item">
