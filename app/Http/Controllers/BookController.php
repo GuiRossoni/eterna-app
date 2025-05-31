@@ -46,7 +46,7 @@ class BookController extends Controller
                 'max:100',
                 'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
             ],
-            'description' => 'nullable|string|max:1000',
+            'description' => 'nullable|string|max:2000',
             'status' => 'required|in:1,0',
         ];
 
@@ -113,7 +113,7 @@ class BookController extends Controller
                 'max:100',
                 'regex:/^(?! )[A-Za-zÀ-ÿ ]+$/u'
             ],
-            'description' => 'nullable|string|max:1000',
+            'description' => 'nullable|string|max:2000',
             'status' => 'required|in:1,0',
         ];
 

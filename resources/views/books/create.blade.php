@@ -31,7 +31,10 @@
 
                         <div class="mb-3">
                             <label for="author" class="form-label">Descrição</label>
-                            <textarea name="description"  id="description" class="form-control" placeholder="Descrição" cols="30" rows="5">{{ old('description') }}</textarea>
+                            <textarea name="description"  id="description" class="form-control @error('description') is-invalid @enderror" placeholder="Descrição" cols="30" rows="5">{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="invalid-feedback">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="mb-3">

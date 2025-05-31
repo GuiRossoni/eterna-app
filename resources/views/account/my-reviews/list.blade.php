@@ -41,7 +41,7 @@
                                             <td>{{ $review->book->title }}</td>
                                             <td>{{ $review->review }}</td>
                                             <td>{{ $review->rating }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($review->created_at)->format('d M, Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($review->created_at)->translatedFormat('d \d\e F \d\e Y') }}</td>
                                             <td>
                                                 @if ($review->status == 1)
                                                     <span class="text-success">Ativo</span>

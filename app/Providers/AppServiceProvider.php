@@ -22,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Builder::defaultStringLength(191);
+        \Carbon\Carbon::setLocale('pt_BR');
     }
 }

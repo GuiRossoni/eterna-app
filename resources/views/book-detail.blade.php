@@ -85,7 +85,7 @@
                                         <div class="d-flex justify-content-between">
                                             <h5 class="mb-3">{{ $review->user->name }}</h4>
                                             <span class="text-muted">
-                                                {{ \Carbon\Carbon::parse($review->created_at)->format('d M, Y') }}
+                                                {{ \Carbon\Carbon::parse($review->created_at)->translatedFormat('d \d\e F \d\e Y') }}
                                             </span>         
                                         </div>
                                        @php

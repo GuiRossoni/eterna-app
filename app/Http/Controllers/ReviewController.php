@@ -23,7 +23,7 @@ class ReviewController extends Controller
             });
         }
         
-        $reviews = $reviews->paginate(10);
+        $reviews = $reviews->paginate(5);
         
         return view('account.reviews.list', [
             'reviews' => $reviews,

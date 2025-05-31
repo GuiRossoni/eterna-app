@@ -47,7 +47,7 @@
                             <tr>
                                 <td>{{ $book->title }}</td>
                                 <td>{{ $book->author }}</td>
-                                <td> {{ number_format($avgRating,1) }} ({{ ($book->reviews_count > 1) ? $book->reviews_count.' Avaliações' : $book->reviews_count.' Avaliação' }} )</td>
+                                <td> {{ number_format($avgRating,1) }} ({{ ($book->reviews_count > 1) ? $book->reviews_count.' Avs.' : $book->reviews_count.' Av.' }} )</td>
                                 <td>
                                     @if ($book->status == 1)
                                         <span class="text-success">Ativo</span>
