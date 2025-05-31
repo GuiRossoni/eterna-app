@@ -16,10 +16,12 @@ use Intervention\Image\Drivers\Gd\Driver;
 class AccountController extends Controller
 {
 
+    // Exibe o formulário de registro de usuário
     public function register() {
         return view('account.register');
     }
 
+    // Processa o registro de um novo usuário
     public function processRegister(Request $request) {
         $messages = [
             'name.regex' => 'O nome deve conter apenas letras.',
@@ -55,11 +57,12 @@ class AccountController extends Controller
 
     }
 
+    // Exibe o formulário de login
     public function login() {
         return view('account.login');
-
     }
 
+    // Processa o login do usuário
     public function processLogin(Request $request) {
         $validadtor = Validator::make($request->all(), [
             'email' => 'required|string|email|max:100',
@@ -81,18 +84,16 @@ class AccountController extends Controller
         }
     }
 
+    // Exibe o perfil do usuário autenticado
     public function profile() {
-
         $user = User::find(Auth::user()->id);
-
         return view('account.profile', [
             'user' => $user
         ]);
-
     }
 
+    // Atualiza os dados do perfil do usuário
     public function updateProfile(Request $request) {
-
         $rules = [
             'name' => [
                 'required',
@@ -121,6 +122,7 @@ class AccountController extends Controller
         $user->email = $request->input('email');
         $user->save();
 
+        // Atualiza a imagem de perfil, se enviada
         if (!empty($request->image)) {
 
             File::delete(public_path('uploads/profileImg/' . $user->image));
@@ -139,24 +141,26 @@ class AccountController extends Controller
             $thumb = $img->cover(150, 150);
             $thumbPath = public_path('uploads/profileImg/thumb/' . $imageName);
             $thumb->save($thumbPath);
-    }
+        }
         
         return redirect()->route('account.profile')
             ->with('success', 'Perfil atualizado com sucesso!');
     }
 
+    // Realiza o logout do usuário
     public function logout() {
         Auth::logout();
         return redirect()->route('account.login')
             ->with('success', 'Logout realizado com sucesso!');
     }
 
+    // Lista as avaliações feitas pelo usuário autenticado
     public function myReviews(Request $request) {
         if ($request->has('success')) {
             session()->flash('success', $request->get('success'));
         }
 
-        $reviews = Review::with('book')->where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC');
+        $reviews = Auth::user()->reviews()->with('book')->orderBy('created_at', 'DESC');
 
         if (!empty($request->keyword)) {
             $reviews = $reviews->whereHas('book', function($query) use ($request) {
@@ -171,8 +175,8 @@ class AccountController extends Controller
         ]);
     }
 
+    // Exibe o formulário de edição de uma avaliação do usuário
     public function edit($id) {
-
         $review = Review::where([
             'id' => $id,
             'user_id' => Auth::user()->id
@@ -183,12 +187,10 @@ class AccountController extends Controller
         ]);
     }
 
+    // Atualiza uma avaliação do usuário autenticado
     public function updateMyReview(Request $request, $id)
     {
-        $review = Review::where([
-            'id' => $id,
-            'user_id' => Auth::user()->id
-        ])->firstOrFail();
+        $review = Auth::user()->reviews()->where('id', $id)->firstOrFail();
 
         $validator = Validator::make($request->all(), [
             'review' => 'required|min:5|max:500',
@@ -206,11 +208,13 @@ class AccountController extends Controller
         return redirect()->route('account.myReviews')->with('success', 'Avaliação atualizada com sucesso!');
     }
 
+    // Exibe o formulário de troca de senha
     public function changePasswordForm()
     {
         return view('account.change-password');
     }
 
+    // Processa a troca de senha do usuário autenticado
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    // Exibe a página inicial com a listagem de livros
     public function index(Request $request)
     {
         $books = Book::withCount('reviews')->withSum('reviews', 'rating')->orderBy('created_at', 'DESC');
@@ -27,6 +27,7 @@ class HomeController extends Controller
         ]);
     }
 
+    // Exibe os detalhes de um livro, incluindo avaliações
     public function detail($id, Request $request)
     {
         $book = Book::with(['reviews.user', 'reviews' => function($query){
@@ -34,10 +35,12 @@ class HomeController extends Controller
                   ->orderBy('created_at', 'DESC');
         }])->withCount('reviews')->withSum('reviews', 'rating')->findOrFail($id);
 
+        // Se o livro estiver inativo, retorna 404
         if ($book->status == 0) {
             abort(404);
         }
 
+        // Mensagens de sucesso ou erro para avaliações
         if ($request->has('success_review')) {
             session()->flash('success_review', $request->get('success_review'));
         }

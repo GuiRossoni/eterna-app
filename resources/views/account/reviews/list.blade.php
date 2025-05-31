@@ -54,6 +54,10 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="6" class="text-center">Nenhuma avaliação encontrada.</td>
+                                    </tr>
                                 @endif
                             </tbody>
                         </table>   

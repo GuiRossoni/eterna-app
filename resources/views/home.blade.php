@@ -5,7 +5,7 @@
         <div class="row justify-content-center d-flex mt-5">
             <div class="col-md-12">
                 <div class="d-flex justify-content-between">
-                    <h2 class="mb-3">Livros</h2>
+                    <h3 class="mb-3">Bem-vindo ao Eterna! Cadastre-se, avalie livros e compartilhe sua opinião.</h3>
                     <div class="mt-2">
                         <a href="{{ route('home') }}" class="text-dark">Limpar</a>
                     </div>

@@ -9,7 +9,7 @@ use App\Models\Review;
 
 class ReviewController extends Controller
 {
-
+    // Lista todas as avaliações (admin)
     public function index(Request $request){
         if ($request->has('success')) {
             session()->flash('success', $request->get('success'));
@@ -28,9 +28,9 @@ class ReviewController extends Controller
         return view('account.reviews.list', [
             'reviews' => $reviews,
         ]);
-        
     }
 
+    // Salva uma nova avaliação para um livro
     public function store(Request $request)
     {
         if (!Auth::check()) {
@@ -54,6 +54,7 @@ class ReviewController extends Controller
             ]);
         }
 
+        // Verifica se o usuário já avaliou este livro
         $countReviews = Review::where('book_id', $request->book_id)
             ->where('user_id', Auth::id())
             ->count();
@@ -66,13 +67,14 @@ class ReviewController extends Controller
             ]);
         }
 
-        $review = new Review();
-        $review->book_id = $request->book_id;
-        $review->user_id = Auth::id();
-        $review->review = $request->review;
-        $review->rating = $request->rating;
-        $review->status = 1;
-        $review->save();
+        // Cria a avaliação
+        Review::create([
+            'book_id' => $request->book_id,
+            'user_id' => Auth::id(),
+            'review' => $request->review,
+            'rating' => $request->rating,
+            'status' => 1,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -81,6 +83,7 @@ class ReviewController extends Controller
         ]);
     }
 
+    // Exibe o formulário de edição de uma avaliação
     public function edit($id)
     {
         $review = Review::findOrFail($id);
@@ -90,10 +93,12 @@ class ReviewController extends Controller
         ]);
     }
 
+    // Atualiza uma avaliação existente
     public function update(Request $request, $id)
     {
         $review = Review::findOrFail($id);
 
+        // Verifica se o usuário é o dono da avaliação
         if ($review->user_id != Auth::id()) {
             return redirect()->route('account.reviews')->withErrors(['Você não tem permissão para editar esta avaliação.']);
         }
@@ -107,13 +112,15 @@ class ReviewController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $review->review = $request->review;
-        $review->status = $request->status;
-        $review->save();
+        $review->update([
+            'review' => $request->review,
+            'status' => $request->status,
+        ]);
 
         return redirect()->route('account.reviews')->with('success', 'Avaliação atualizada com sucesso!');
     }
 
+    // Remove uma avaliação do banco de dados
     public function deleteReview(Request $request)
     {
         $id = $request->id;

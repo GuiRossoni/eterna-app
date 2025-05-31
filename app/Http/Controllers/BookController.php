@@ -10,6 +10,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class BookController extends Controller
 {
+    // Lista os livros com filtros e paginação
     public function index(Request $request)
     {
         $books = Book::orderBy('created_at','DESC');
@@ -26,10 +27,14 @@ class BookController extends Controller
             'books' => $books,
         ]);
     }
+
+    // Exibe o formulário de cadastro de livro
     public function create()
     {
         return view('books.create');
     }
+
+    // Salva um novo livro no banco de dados
     public function store(Request $request)
     {
         $rules = [
@@ -61,17 +66,11 @@ class BookController extends Controller
                 ->withErrors($validator);
         }
 
-        $book = new Book();
-        $book->title = $request->title;
-        $book->author = $request->author;
-        $book->description = $request->description;
-        $book->status = $request->status;
-        $book->save();
+        // Criação do livro
+        $book = Book::create($request->only(['title', 'author', 'description', 'status']));
 
+        // Salva imagem do livro, se enviada
         if (!empty($request->image)) {
-
-            
-
             $image = $request->image;
             $ext = $image->getClientOriginalExtension();
             $imageName = time() . '.' . $ext;
@@ -90,14 +89,18 @@ class BookController extends Controller
                 ->with('success', 'Livro adicionado com sucesso!');
 
     }
-        public function edit($id)
+
+    // Exibe o formulário de edição de um livro
+    public function edit($id)
     {
         $book = Book::find($id);
         return view('books.edit', [
             'book' => $book,
         ]);
     }
-        public function update($id, Request $request)
+
+    // Atualiza os dados de um livro existente
+    public function update($id, Request $request)
     {
         $book = Book::findOrFail($id);
 
@@ -130,15 +133,12 @@ class BookController extends Controller
                 ->withErrors($validator);
         }
 
-        $book->title = $request->title;
-        $book->author = $request->author;
-        $book->description = $request->description;
-        $book->status = $request->status;
-        $book->save();
+        // Atualiza os dados do livro
+        $book->update($request->only(['title', 'author', 'description', 'status']));
 
+        // Atualiza imagem do livro, se enviada
         if (!empty($request->image)) 
         {
-
             File::delete(public_path('uploads/books/' . $book->image));
             File::delete(public_path('uploads/books/thumb/' . $book->image));
 
@@ -159,7 +159,9 @@ class BookController extends Controller
         return redirect()->route('books.index')
                 ->with('success', 'Livro atualizado com sucesso!');
     }
-        public function destroy(Request $request)
+
+    // Remove um livro do banco de dados
+    public function destroy(Request $request)
     {
         $book = Book::find($request->id);
         if ($book == null)
